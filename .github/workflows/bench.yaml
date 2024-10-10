@@ -1,0 +1,32 @@
+name: bench
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bench-and-publish-github-pages:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: install build tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential clang gnuplot -y
+
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: execute benchmark
+        run: cargo bench
+
+      # - name: publish benchmark results
+      #   run: |
+      #     mkdir -p gh-pages
+      #     cp target/criterion/report/index.html gh-pages/index.html
+      #     git clone
