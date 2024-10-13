@@ -15,35 +15,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install build-essential clang gnuplot -y
 
-      - name: checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-
       - name: setup rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           profile: minimal
 
-      - name: execute benchmark (main)
-        # run: |
-        #   git checkout -b main origin/main
-        #   make run-benchmarks
-        run: make run-benchmarks
-
       - name: checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
+      - name: execute benchmark (main)
+        run: |
+          git checkout main
+          make run-benchmarks
+
       - name: execute benchmark (pull_request)
-        # run: |
-        #   git checkout -b ${{ github.head_ref }} origin/${{ github.head_ref }}
-        #   make run-benchmarks
-        run: make run-benchmarks
+        run: |
+          git checkout ${{ github.head_ref }}
+          make run-benchmarks
 
       - name: target content
         run: |
