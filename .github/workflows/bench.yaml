@@ -1,10 +1,12 @@
 name: bench
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  bench-and-publish-github-pages:
+  bench:
     runs-on: ubuntu-latest
     steps:
 
@@ -22,8 +24,20 @@ jobs:
           toolchain: stable
           profile: minimal
 
-      - name: execute benchmark
-        run: cargo bench
+      - name: execute benchmark (main)
+        run: |
+          git checkout -b main origin/main
+          make run-benchmarks
+
+      - name: execute benchmark (pull_request)
+        run: |
+          git checkout -b ${{ github.head_ref }} origin/${{ github.head_ref }}
+          make run-benchmarks
+
+      - name: target content
+        run: |
+          cd target/criterion/bubble_sort
+          ls -l
 
       # - name: publish benchmark results
       #   run: |
