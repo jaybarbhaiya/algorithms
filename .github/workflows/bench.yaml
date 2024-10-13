@@ -31,7 +31,7 @@ jobs:
 
       - name: execute benchmark (pull_request)
         run: |
-          git checkout origin/${{ github.head_ref }}
+          git checkout -b origin/${{ github.head_ref }}
           make run-benchmarks
 
       - name: target content
