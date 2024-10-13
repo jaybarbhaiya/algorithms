@@ -31,8 +31,13 @@ jobs:
 
       - name: execute benchmark (pull_request)
         run: |
-          git checkout ${{ github.head_ref }}
+          git checkout origin/${{ github.head_ref }}
           make run-benchmarks
+
+      - name: target content
+        run: |
+          cd target/criterion/bubble_sort
+          ls -l
 
       # - name: publish benchmark results
       #   run: |
