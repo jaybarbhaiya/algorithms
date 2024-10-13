@@ -26,8 +26,7 @@ jobs:
 
       - name: execute benchmark (main)
         run: |
-          DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
-          git checkout $DEFAULT_BRANCH
+          git checkout -b origin/main
           make run-benchmarks
 
       - name: execute benchmark (pull_request)
