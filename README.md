@@ -11,4 +11,20 @@ The aim is to practice and learn about Rust.
 ## Benchmark
 
 - Commandline options:
-`cargo bench --bench bubble_sort -- --save-baseline <name>`
+  - checkout a branch
+  
+    ```console
+    git checkout main
+    ```
+
+  - The below command creates a benchmark without overwriting existing ones.
+  
+    ```console
+    cargo bench --bench bubble_sort -- --save-baseline <name>
+    ```
+
+  - Loading and comparing baselines   
+  
+    ```console
+    cargo bench --bench bubble_sort -- --load-baseline new --baseline <name>
+    ```
