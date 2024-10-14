@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: git config
         run: |
-          git config --global user.email "<>"
-          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: install build tooling
         run: |
