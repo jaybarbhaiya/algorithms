@@ -9,6 +9,10 @@ jobs:
   bench:
     runs-on: ubuntu-latest
     steps:
+      - name: git config
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: install build tooling
         run: |
@@ -42,7 +46,5 @@ jobs:
           cp -r target/criterion/ .
           git add .
           git commit -m "benchmark results"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
           git push
 
