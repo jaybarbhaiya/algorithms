@@ -5,8 +5,23 @@ on:
     branches:
       - main
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  bench:
+  bench-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
 
@@ -36,13 +51,23 @@ jobs:
           git checkout ${{ github.head_ref }}
           make run-benchmarks
 
-      - name: target content
+      - name: checkout gh-pages, copy and commit report to the branch
         run: |
-          cd target/criterion/bubble_sort
-          ls -l
+          git checkout gh-pages
+          cp -r target/criterion/ .
+          git add .
+          git commit -m "benchmark results"
+          git push
 
-      # - name: publish benchmark results
-      #   run: |
-      #     mkdir -p gh-pages
-      #     cp target/criterion/report/index.html gh-pages/index.html
-      #     git clone
+      - name: Setup pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: 'criterion'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
