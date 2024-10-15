@@ -33,12 +33,12 @@ jobs:
       - name: execute benchmark (main)
         run: |
           git checkout main
-          make run-benchmarks
+          cargo bench
 
       - name: execute benchmark (pull_request)
         run: |
           git checkout ${{ github.head_ref }}
-          make run-benchmarks
+          cargo bench
 
       - name: checkout gh-pages, copy and commit report to the branch
         run: |
