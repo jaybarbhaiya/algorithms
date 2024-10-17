@@ -73,7 +73,8 @@ jobs:
           IFS='|' read -r -a tags <<<"$tags"
           [[ ${#tags[@]} -eq 0 ]] && echo "no tags found" && exit 1
           for tag in ${tags[@]}; do
-            echo "Tag: $tag"
+            git checkout $tag
+            cargo bench --bench bubble_sort -- --save-baseline $tag
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
