@@ -5,6 +5,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 jobs:
   bench:
@@ -70,7 +73,7 @@ jobs:
       - name: Run benchmarks
         run: |
           tags=${{ steps.list-tags.outputs.tags }}
-          for tag in $(echo $tags | jq -r '.[]'); do
+          echo $tags | jq -c '.[]' | while read tag; do
             echo "Running benchmark for tag: $tag"
           done
         env:
