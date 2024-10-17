@@ -21,7 +21,7 @@ jobs:
       - name: install build tooling
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential clang gnuplot -y
+          sudo apt-get install build-essential clang gnuplot jq -y
 
       - name: setup rust
         uses: actions-rs/toolchain@v1
