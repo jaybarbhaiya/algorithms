@@ -73,7 +73,7 @@ jobs:
       - name: Run benchmarks
         run: |
           tags=${{ steps.list-tags.outputs.tags }}
-          echo $tags | jq -c '.[]' | while read tag; do
+          echo $tags | jq -r '.[]' | while read tag; do
             echo "Running benchmark for tag: $tag"
           done
         env:
