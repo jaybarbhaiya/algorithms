@@ -15,21 +15,21 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      # - name: install build tooling
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install build-essential clang gnuplot -y
+      - name: install build tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential clang gnuplot -y
 
-      # - name: setup rust
-      #   uses: actions-rs/toolchain@v1
-      #   with:
-      #     toolchain: stable
-      #     profile: minimal
+      - name: setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
 
       - name: checkout repository
         uses: actions/checkout@v4
-        # with:
-        #   fetch-depth: 0
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -62,21 +62,31 @@ jobs:
         run: |
           echo "Tags from previous step: ${{ steps.list-tags.outputs.tags }}"
 
-      # - name: execute benchmark (main)
-      #   run: |
-      #     git checkout main
-      #     cargo bench
+      - name: matrix bench
+        run: |
+          git checkout main
+          cargo bench
+
+      - name: Run benchmarks
+        run: |
+          tags=${{ steps.list-tags.outputs.tags }}
+          for tag in $(echo $tags | jq -r '.[]'); do
+            echo "Running benchmark for tag: $tag"
+            cargo bench --bench bubble_sort --save-baseline $tag
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: execute benchmark (pull_request)
       #   run: |
       #     git checkout ${{ github.head_ref }}
       #     cargo bench
 
-      # - name: checkout gh-pages, copy and commit report to the branch
-      #   run: |
-      #     git checkout gh-pages
-      #     cp -r target/criterion/ .
-      #     git add .
-      #     git commit -m "benchmark results"
-      #     git push
+      - name: checkout gh-pages, copy and commit report to the branch
+        run: |
+          git checkout gh-pages
+          cp -r target/criterion/ .
+          git add .
+          git commit -m "benchmark results"
+          git push
 
