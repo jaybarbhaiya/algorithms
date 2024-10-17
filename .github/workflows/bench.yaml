@@ -63,7 +63,7 @@ jobs:
 
               for (const tag of tagNames) {
                 console.log(`Checking out tag: ${tag}`);
-                execSync(`git checkout -b ${tag} ${tag}`);
+                execSync(`git checkout -b v0.1.0 v0.1.0`);
                 execSync(`cargo bench --bench bubble_sort -- --save-baseline ${tag}`);
           })();
           "
