@@ -31,21 +31,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: execute benchmark (main)
-        run: |
-          git checkout main
-          cargo bench
+      - name: List all tags
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: tags } = await github.git.listTags({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            core.setOutput('tags', tags.map(tag => tag.name).join('\n'));
 
-      - name: execute benchmark (pull_request)
-        run: |
-          git checkout ${{ github.head_ref }}
-          cargo bench
+      # - name: execute benchmark (main)
+      #   run: |
+      #     git checkout main
+      #     cargo bench
 
-      - name: checkout gh-pages, copy and commit report to the branch
-        run: |
-          git checkout gh-pages
-          cp -r target/criterion/ .
-          git add .
-          git commit -m "benchmark results"
-          git push
+      # - name: execute benchmark (pull_request)
+      #   run: |
+      #     git checkout ${{ github.head_ref }}
+      #     cargo bench
+
+      # - name: checkout gh-pages, copy and commit report to the branch
+      #   run: |
+      #     git checkout gh-pages
+      #     cp -r target/criterion/ .
+      #     git add .
+      #     git commit -m "benchmark results"
+      #     git push
 
