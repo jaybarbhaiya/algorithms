@@ -68,17 +68,17 @@ jobs:
 
       - name: Run benchmarks
         run: |
-          tags=${{ steps.list-tags.outputs.tags }}
-          tags=$(echo $tags | jq -r '.[]')
-          if [ -z "$tags" ]; then
+            tags=${{ steps.list-tags.outputs.tags }}
+            tags=$(echo "$tags" | jq -r '.[]')
+            if [ -z "$tags" ]; then
             echo "no tags found"
             exit 1
-          fi
-          for tag in $tags; do
+            fi
+            for tag in $tags; do
             echo "Checking out tag: $tag"
-            git checkout $tag
-            cargo bench --bench bubble_sort -- --save-baseline $tag
-          done
+            git checkout "$tag"
+            cargo bench --bench bubble_sort -- --save-baseline "$tag"
+            done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
