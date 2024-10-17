@@ -21,7 +21,7 @@ jobs:
       - name: install build tooling
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential clang gnuplot jq -y
+          sudo apt-get install build-essential clang gnuplot -y
 
       - name: setup rust
         uses: actions-rs/toolchain@v1
@@ -62,9 +62,10 @@ jobs:
               }
 
               for (const tag of tagNames) {
-                console.log(`Checking out tag: ${tag}`);
-                execSync(`git checkout -b v0.1.0 v0.1.0`);
-                execSync(`cargo bench --bench bubble_sort -- --save-baseline ${tag}`);
+                console.log('Checking out tag: ', tag);
+                execSync('git checkout -b' + tag + ' ' + tag);
+                execSync('cargo bench --bench bubble_sort -- --save-baseline ' + tag);
+              }
           })();
           "
         env:
