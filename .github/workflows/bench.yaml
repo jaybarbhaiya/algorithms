@@ -62,15 +62,16 @@ jobs:
         run: |
           echo "Tags from previous step: ${{ steps.list-tags.outputs.tags }}"
 
-      - name: matrix bench
-        run: |
-          git checkout main
-          cargo bench
+      # - name: matrix bench
+      #   run: |
+      #     git checkout main
+      #     cargo bench
 
       - name: Run benchmarks
         run: |
           tags=${{ steps.list-tags.outputs.tags }}
           for tag in $(echo $tags | jq -r '.[]'); do
+            git checkout $tag
             echo "Running benchmark for tag: $tag"
             cargo bench --bench bubble_sort --save-baseline $tag
           done
