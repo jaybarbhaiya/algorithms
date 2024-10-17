@@ -69,7 +69,7 @@ jobs:
       - name: Run benchmarks
         run: |
           tags=${{ steps.list-tags.outputs.tags }}
-          for tag in $(echo $tags | jq -r '.[]'); do
+          for tag in $tags; do
             echo "Tag: $tag"
           done
         env:
