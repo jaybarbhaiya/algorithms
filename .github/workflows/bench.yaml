@@ -42,20 +42,29 @@ jobs:
       - name: Install dependencies
         run: npm install @actions/github
 
-      - name: List tags
-        id: list-tags
+      - name: Run benchmark for each tag
         run: |
           node -e "
-          const { getOctokit, context } = require('@actions/github');
-          const octokit = getOctokit(process.env.GITHUB_TOKEN);
-          (async () => {
-            const tags = await octokit.rest.repos.listTags({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
-            const tagNames = tags.data.map(tag => tag.name);
-            console.log('Tags in the repository:', tagNames);
-            console.log('::set-output name=tags::' + JSON.stringify(tagNames));
+          const { execSync } = require('child_process');
+            const { getOctokit, context } = require('@actions/github');
+            const octokit = getOctokit(process.env.GITHUB_TOKEN);
+
+            (async () => {
+              const tags = await octokit.rest.repos.listTags({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              const tagNames = tags.data.map(tag => tag.name);
+
+              if (tagNames.length === 0) {
+                console.log('no tags found');
+                process.exit(1);
+              }
+
+              for (const tag of tagNames) {
+                console.log(`Checking out tag: ${tag}`);
+                execSync(`git checkout ${tag}`);
+                execSync(`cargo bench --bench bubble_sort -- --save-baseline ${tag}`);
           })();
           "
         env:
@@ -65,22 +74,6 @@ jobs:
       #   run: |
       #     git checkout main
       #     cargo bench
-
-      - name: Run benchmarks
-        run: |
-            tags=${{ steps.list-tags.outputs.tags }}
-            tags=$(echo "$tags" | jq -r '.[]')
-            if [ -z "$tags" ]; then
-            echo "no tags found"
-            exit 1
-            fi
-            for tag in $tags; do
-            echo "Checking out tag: $tag"
-            git checkout "$tag"
-            cargo bench --bench bubble_sort -- --save-baseline "$tag"
-            done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: execute benchmark (pull_request)
       #   run: |
