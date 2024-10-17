@@ -49,6 +49,7 @@ jobs:
             console.log("Tags in the repository:");
             tags.data.forEach(tag => {
               console.log(tag.name);
+            });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
