@@ -40,6 +40,7 @@ jobs:
         run: npm install @actions/github
 
       - name: List tags
+        id: list-tags
         run: |
           node -e "
           const { getOctokit, context } = require('@actions/github');
@@ -49,14 +50,17 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
-            console.log('Tags in the repository:');
-            tags.data.forEach(tag => {
-              console.log(tag.name);
-            });
+            const tagNames = tags.data.map(tag => tag.name);
+            console.log('Tags in the repository:', tagNames);
+            console.log('::set-output name=tags::' + JSON.stringify(tagNames));
           })();
           "
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Use tags
+        run: |
+          echo "Tags from previous step: ${{ steps.list-tags.outputs.tags }}"
 
       # - name: execute benchmark (main)
       #   run: |
