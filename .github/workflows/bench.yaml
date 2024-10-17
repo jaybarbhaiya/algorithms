@@ -69,10 +69,13 @@ jobs:
       - name: Run benchmarks
         run: |
           tags=${{ steps.list-tags.outputs.tags }}
-          tags="${1:-${tags}}"
-          IFS='|' read -r -a tags <<<"$tags"
-          [[ ${#tags[@]} -eq 0 ]] && echo "no tags found" && exit 1
-          for tag in ${tags[@]}; do
+          tags=$(echo $tags | jq -r '.[]')
+          if [ -z "$tags" ]; then
+            echo "no tags found"
+            exit 1
+          fi
+          for tag in $tags; do
+            echo "Checking out tag: $tag"
             git checkout $tag
             cargo bench --bench bubble_sort -- --save-baseline $tag
           done
