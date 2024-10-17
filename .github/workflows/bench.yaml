@@ -15,31 +15,34 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: install build tooling
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential clang gnuplot -y
+      # - name: install build tooling
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install build-essential clang gnuplot -y
 
-      - name: setup rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
+      # - name: setup rust
+      #   uses: actions-rs/toolchain@v1
+      #   with:
+      #     toolchain: stable
+      #     profile: minimal
 
       - name: checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: List all tags
+      - name: List tags
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: tags } = await github.git.listTags({
+            const tags = await github.repos.listTags({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
-            core.setOutput('tags', tags.map(tag => tag.name).join('\n'));
+            console.log("Tags in the repository:");
+            tags.data.forEach(tag => {
+              console.log(tag.name);
+            });
 
       # - name: execute benchmark (main)
       #   run: |
