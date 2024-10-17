@@ -40,19 +40,21 @@ jobs:
         run: npm install @actions/github
 
       - name: List tags
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { getOctokit, context } = require('@actions/github');
-            const octokit = getOctokit(process.env.GITHUB_TOKEN);
+        run: |
+          node -e "
+          const { getOctokit, context } = require('@actions/github');
+          const octokit = getOctokit(process.env.GITHUB_TOKEN);
+          (async () => {
             const tags = await octokit.rest.repos.listTags({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
-            console.log("Tags in the repository:");
+            console.log('Tags in the repository:');
             tags.data.forEach(tag => {
               console.log(tag.name);
             });
+          })();
+          "
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
