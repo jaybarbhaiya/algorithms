@@ -1,5 +1,4 @@
 pub fn bubble_sort(input: &mut [usize]) -> &mut [usize] {
-    println!("Perform sort with the bubble sort algorithm.");
     let n = input.len();
     for i in 0..n - 1 {
         let mut swapped = false;
